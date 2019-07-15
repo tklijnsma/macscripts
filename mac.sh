@@ -7,10 +7,6 @@ location="${MAC_LOCATION}"
 command=''
 testmode="false"
 
-if [ -z "$location" ]; then
-    echo "Location not set; Recommended to define MAC_LOCATION in .bashrc"
-fi
-
 if [ -z "$port" ]; then
     port="2019"
 fi
