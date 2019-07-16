@@ -1,3 +1,6 @@
+#!/bin/bash
+source /etc/profile
+
 application="open"
 location=""
 file=""
@@ -36,6 +39,19 @@ echo "macbook: remote file/dir = ${file}"
 remote_to_local(){
     if [ "${location}" == "zwolle" ]; then
         file_local="/Users/thomas/mnt/zwolle${file}"
+    elif [ "${location}" == "geneve" ]; then
+        file_local="/Users/thomas/mnt/rpi${file}"
+    elif [ "${location}" == "gcloud_cpu" ]; then
+        file_local="${file/\/home\/thomas//Users/thomas/mnt/gcloud-cpu}"
+    elif [ "${location}" == "gcloud_gpu" ]; then
+        file_local="${file/\/home\/thomas//Users/thomas/mnt/gcloud-gpu}"
+    elif [ "${location}" == "lpc" ]; then
+        file_local="${file/\/uscms\/home\/klijnsma//Users/thomas/mnt/lpc}"
+    elif [ "${location}" == "t3" ]; then
+        file_local="${file/\/mnt\/t3nfs01\/data01\/shome\/tklijnsm//Users/thomas/mnt/psi}"
+    else
+        echo "Location ${location} has no mapping rule!"
+        exit
     fi
     }
 

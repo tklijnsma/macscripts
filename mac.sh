@@ -80,6 +80,11 @@ run() {
         eval "${command}"
     else
         echo "TESTMODE:"
+        echo "file:        ${file}"
+        echo "application: ${application}"
+        echo "location:    ${location}"
+        echo "port:        ${port}"
+        echo "command:"
         echo "${command}"
     fi
 
