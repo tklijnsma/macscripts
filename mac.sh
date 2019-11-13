@@ -6,6 +6,7 @@ verbose=''
 location="${MAC_LOCATION}"
 command=''
 testmode="false"
+user="klijnsma"
 
 if [ -z "$port" ]; then
     port="2019"
@@ -35,7 +36,7 @@ compile_ssh_command() {
 
     command="ssh \
 -p ${port} ${verbose_option} \
-thomas@localhost 'source /Users/thomas/scripts/maclocal.sh -f \"${file_fullpath}\" -l ${location} ${application_option}' \
+${user}@localhost 'source /Users/klijnsma/scripts/macscripts/maclocal.sh -f \"${file_fullpath}\" -l ${location} ${application_option}' \
 "
     }
 
