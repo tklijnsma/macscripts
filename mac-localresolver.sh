@@ -37,26 +37,26 @@ _macresolv_getopts() {
 
 _macresolv_remote_to_local(){
     if [ "${location}" == "zwolle" ]; then
-        file_local="${mnt_dir}/mnt/zwolle${file}"
+        file_local="${mnt_dir}/zwolle${file}"
     elif [ "${location}" == "geneve" ]; then
-        file_local="${mnt_dir}/mnt/rpi${file}"
+        file_local="${mnt_dir}/rpi${file}"
     elif [ "${location}" == "gcloud_cpu" ]; then
-        file_local="${file/\/home\/thomas/${mnt_dir}/mnt/gcloud-cpu}"
+        file_local="${file/\/home\/thomas/${mnt_dir}/gcloud-cpu}"
     elif [ "${location}" == "gcloud_gpu" ]; then
-        file_local="${file/\/home\/thomas/${mnt_dir}/mnt/gcloud-gpu}"
+        file_local="${file/\/home\/thomas/${mnt_dir}/gcloud-gpu}"
     elif [ "${location}" == "lpc" ]; then
         file_local="${file}"
-        file_local="${file_local/\/uscms\/home\/klijnsma\/nobackup/${mnt_dir}/mnt/lpcnobackup}"
-        file_local="${file_local/\/uscms_data\/d3\/klijnsma/${mnt_dir}/mnt/lpcnobackup}"
-        file_local="${file_local/\/uscms_data\/d2\/klijnsma/${mnt_dir}/mnt/lpcnobackup}"
-        file_local="${file_local/\/uscms\/home\/klijnsma/${mnt_dir}/mnt/lpc}"
-        file_local="${file_local/\/uscms\/homes\/k\/klijnsma/${mnt_dir}/mnt/lpc}"
+        file_local="${file_local/\/uscms\/home\/klijnsma\/nobackup/${mnt_dir}/lpcnobackup}"
+        file_local="${file_local/\/uscms_data\/d3\/klijnsma/${mnt_dir}/lpcnobackup}"
+        file_local="${file_local/\/uscms_data\/d2\/klijnsma/${mnt_dir}/lpcnobackup}"
+        file_local="${file_local/\/uscms\/home\/klijnsma/${mnt_dir}/lpc}"
+        file_local="${file_local/\/uscms\/homes\/k\/klijnsma/${mnt_dir}/lpc}"
     elif [ "${location}" == "t3" ]; then
-        file_local="${file/\/mnt\/t3nfs01\/data01\/shome\/tklijnsm/${mnt_dir}/mnt/psi}"
+        file_local="${file/\/mnt\/t3nfs01\/data01\/shome\/tklijnsm/${mnt_dir}/psi}"
     elif [[ $location == gc* ]]; then
-        file_local="${mnt_dir}/mnt/${location}${file}"
+        file_local="${mnt_dir}/${location}${file}"
     elif [ "${location}" == "rpi" ]; then
-        file_local="${mnt_dir}/mnt/rpi/${file}"
+        file_local="${mnt_dir}/rpi/${file}"
     else
         echo "Location ${location} has no mapping rule!"
         exit
@@ -64,11 +64,14 @@ _macresolv_remote_to_local(){
     }
 
 mac-resolv() {
-    _macresolv_remote_to_local
-    echo "macbook: local file/dir = ${file_local}"
-    if [ "${testmode}" == "true" ]; then
-        echo "$application $file_local"
-    else
-        $application $file_local
-    fi
+    (
+        _macresolv_getopts "$@"
+        _macresolv_remote_to_local
+        echo "macbook: local file/dir = ${file_local}"
+        if [ "${testmode}" == "true" ]; then
+            echo "$application $file_local"
+        else
+            $application $file_local
+        fi
+        )
     }
