@@ -1,44 +1,41 @@
 #!/bin/bash
-source /etc/profile
-source ~/scripts/src/mac.sh
 
-application="mac"
-location=""
-file=""
-testmode="false"
-mnt_dir="/Users/klijnsma"
-
-print_usage() {
+_macresolv_print_usage() {
     printf "Usage: ..."
     echo
     }
 
-cleanup() {
+_macresolv_cleanup() {
+    export application="mac"
+    export location=""
+    export file=""
+    export testmode="false"
+    export mnt_dir="${MAC_MNTDIR}"
     OPTARG=''
     OPTIND=''
     OPTERR=''
     }
 
-cleanup
+_macresolv_getopts() {
+    _macresolv_cleanup
+    while getopts 'l:a:f:t' flag; do
+        case "${flag}" in
+            l) location="${OPTARG}" ;;
+            a) application="${OPTARG}" ;;
+            f) file="${OPTARG}" ;;
+            t) testmode="true" ;;
+            *) _macresolv_print_usage
+                _macresolv_cleanup
+                return
+                ;;
+            esac
+        done
+    echo "macbook: location = ${location}"
+    echo "macbook: application = ${application}"
+    echo "macbook: remote file/dir = ${file}"
+    }
 
-while getopts 'l:a:f:t' flag; do
-    case "${flag}" in
-        l) location="${OPTARG}" ;;
-        a) application="${OPTARG}" ;;
-        f) file="${OPTARG}" ;;
-        t) testmode="true" ;;
-        *) print_usage
-            cleanup
-            return
-            ;;
-        esac
-    done
-
-echo "macbook: location = ${location}"
-echo "macbook: application = ${application}"
-echo "macbook: remote file/dir = ${file}"
-
-remote_to_local(){
+_macresolv_remote_to_local(){
     if [ "${location}" == "zwolle" ]; then
         file_local="${mnt_dir}/mnt/zwolle${file}"
     elif [ "${location}" == "geneve" ]; then
@@ -66,12 +63,12 @@ remote_to_local(){
     fi
     }
 
-remote_to_local
-
-echo "macbook: local file/dir = ${file_local}"
-
-if [ "${testmode}" == "true" ]; then
-    echo "$application $file_local"
-else
-    $application $file_local
-fi
+mac-resolv() {
+    _macresolv_remote_to_local
+    echo "macbook: local file/dir = ${file_local}"
+    if [ "${testmode}" == "true" ]; then
+        echo "$application $file_local"
+    else
+        $application $file_local
+    fi
+    }
