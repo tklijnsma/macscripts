@@ -1,9 +1,6 @@
-application=''
-file=''
-file_fullpath=''
+string=""
 port="${MAC_SSH_PORT}"
 verbose=''
-location="${MAC_LOCATION}"
 command=''
 testmode="false"
 user="klijnsma"
@@ -24,30 +21,18 @@ cleanup() {
     }
 
 compile_ssh_command() {
-    application_option=""
-    if [ ! -z "${application}" ]; then
-        application_option=" -a ${application} "
-    fi
-
     verbose_option=""
     if [ ! -z "${verbose}" ]; then
         verbose_option=" -vvv "
     fi
-
-    command="ssh \
--p ${port} ${verbose_option} \
-${user}@localhost 'source /Users/klijnsma/scripts/macscripts/maclocal.sh -f \"${file_fullpath}\" -l ${location} ${application_option}' \
-"
+    command="ssh -p ${port} ${verbose_option} ${user}@localhost 'echo \"$string\" | pbcopy' "
     }
-
 
 
 cleanup
 
-while getopts 'l:a:p:vt' flag; do
+while getopts 'p:vt' flag; do
     case "${flag}" in
-        l) location="${OPTARG}" ;;
-        a) application="${OPTARG}" ;;
         p) port="${OPTARG}" ;;
         v) verbose='-vvv' ;;
         t) testmode="true" ;;
@@ -64,16 +49,13 @@ file=$@
 
 
 run() {
-    if [ -z "${file}" ] || [ -z "${location}" ] || [ -z "${port}" ]; then
-        echo "file:     ${file}"
-        echo "location: ${location}"
+    if [ -z "${string}" ] || [ -z "${port}" ]; then
+        echo "string:   ${string}"
         echo "port:     ${port}"
         print_usage
         cleanup
         return
     fi
-
-    file_fullpath="$(cd "$(dirname "$file")"; pwd)/$(basename "$file")"
 
     compile_ssh_command
 
@@ -81,9 +63,7 @@ run() {
         eval "${command}"
     else
         echo "TESTMODE:"
-        echo "file:        ${file}"
-        echo "application: ${application}"
-        echo "location:    ${location}"
+        echo "string:      ${string}"
         echo "port:        ${port}"
         echo "command:"
         echo "${command}"
@@ -91,5 +71,10 @@ run() {
 
     cleanup
     }
+
+# Reads the stdin to variable string
+IFS='' read -r -d '' string <<"EOF"
+$(< /dev/stdin)
+EOF
 
 run
