@@ -99,3 +99,67 @@ mac-ls() {
         ssh -p $port $user@localhost 'ls'
         )
     }
+
+pbcopy() {
+    (
+    _compile_pbcopy_ssh_command() {
+        verbose_option=""
+        if [ ! -z "${verbose}" ]; then
+            verbose_option=" -vvv "
+        fi
+        command="ssh -p ${port} ${verbose_option} ${user}@localhost 'echo \"$string\" | pbcopy' "
+        }
+
+    _mac-cleanup
+
+    while getopts 'p:vt' flag; do
+        case "${flag}" in
+            p) port="${OPTARG}" ;;
+            v) verbose='-vvv' ;;
+            t) testmode="true" ;;
+            *) print_usage
+                _mac-cleanup
+                return
+                ;;
+            esac
+        done
+
+    # Get the rest of the arguments; this should be just one filename
+    shift $((OPTIND-1))
+    file=$@
+
+
+    run() {
+        if [ -z "${string}" ] || [ -z "${port}" ]; then
+            echo "string:   ${string}"
+            echo "port:     ${port}"
+            print_usage
+            _mac-cleanup
+            return
+        fi
+
+        string=${string%$'\n'}
+        _compile_pbcopy_ssh_command
+
+        if [ "${testmode}" == "false" ]; then
+            echo "${command}"
+            eval "${command}"
+        else
+            echo "TESTMODE:"
+            echo "string:      ${string}"
+            echo "port:        ${port}"
+            echo "command:"
+            echo "${command}"
+        fi
+
+        _mac-cleanup
+        }
+
+    # Reads the stdin to variable string
+    IFS='' read -r -d '' string <<"EOF"
+$(< /dev/stdin)
+EOF
+
+    run
+    )
+    }
