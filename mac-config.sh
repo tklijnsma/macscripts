@@ -1,4 +1,4 @@
-export MAC_ISREMOTE="FALSE"
+export MAC_ISREMOTE="TRUE"
 export MAC_SSH_PORT="2019"
 export MAC_LOCALUSER="klijnsma"
 export MAC_MNTDIR="/Users/klijnsma/mnt"
