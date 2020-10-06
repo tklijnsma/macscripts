@@ -29,7 +29,7 @@ _mac-compile_ssh_command() {
     fi
     command="ssh \
 -p ${port} ${verbose_option} \
-${user}@localhost \
+${user}@${MAC_HOST} \
 'source ~/.bashrc; mac-resolv -f \"${file_fullpath}\" -l ${location} ${application_option}' \
 "
     }
@@ -96,7 +96,7 @@ mac-ls() {
     # Useful for testing connection
     (
         _mac-getopts
-        ssh -p $port $user@localhost 'ls'
+        ssh -p $port $user@$MAC_HOST 'ls'
         )
     }
 
@@ -107,7 +107,7 @@ pbcopy() {
         if [ ! -z "${verbose}" ]; then
             verbose_option=" -vvv "
         fi
-        command="ssh -p ${port} ${verbose_option} ${user}@localhost 'echo \"$string\" | pbcopy' "
+        command="ssh -p ${port} ${verbose_option} ${user}@${MAC_HOST} 'echo \"$string\" | pbcopy' "
         }
 
     _mac-cleanup
